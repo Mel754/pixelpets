@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixelPets — Vitrina Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #2a1a2f;
+    --surface: #3a223f;
+    --surface2: #4a2b52;
+    --border: #6b3b7a;
+    --accent: #ff8bd1;
+    --accent2: #c084fc;
+    --gold: #facc15;
+    --rare: #e879f9;
+    --common: #f9a8d4;
+    --legendary: #fb7185;
+    --text: #fdf4ff;
+    --text-muted: #c4b5fd;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,212,255,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(123,47,255,0.05) 0%, transparent 50%);
+  }
+  header {
+    text-align: center;
+    padding: 3rem 2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(0,212,255,0.04) 0%, transparent 100%);
+  }
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeDown 0.6s ease both;
+  }
+  .tagline {
+    color: var(--text-muted);
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+    animation: fadeDown 0.6s 0.1s ease both;
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(12px);
+    animation: fadeDown 0.5s 0.2s ease both;
+  }
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+    min-width: 180px;
+  }
+  .control-group label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .control-group input,
+  .control-group select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.6rem 0.9rem;
+    border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .control-group input:focus,
+  .control-group select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.12);
+  }
+  .control-group select option { background: #0d1525; }
+  .stats-bar {
+    padding: 0.75rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .count-badge {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+    padding: 2rem;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    animation: cardIn 0.35s ease both;
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,212,255,0.12);
+    border-color: var(--accent);
+  }
+  .card-avatar {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-avatar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, var(--surface) 100%);
+  }
+  .card-body { padding: 1rem 1.2rem 1.2rem; }
+  .card-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+  .card-meta {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.9rem;
+  }
+  .badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge-especie { background: rgba(0,212,255,0.12); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
+  .badge-comun      { background: rgba(74,222,128,0.12);  color: var(--common);    border: 1px solid rgba(74,222,128,0.3); }
+  .badge-raro       { background: rgba(168,85,247,0.12);  color: var(--rare);      border: 1px solid rgba(168,85,247,0.3); }
+  .badge-legendario { background: rgba(249,115,22,0.12);  color: var(--legendary); border: 1px solid rgba(249,115,22,0.3); }
+  .card-price {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+  .card-price span { font-size: 0.7rem; color: var(--text-muted); font-family: 'Rajdhani', sans-serif; font-weight: 400; }
+  .health-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+  }
+  .health-bar { height: 5px; border-radius: 3px; background: var(--surface2); overflow: hidden; }
+  .health-fill { height: 100%; border-radius: 3px; }
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+  }
+  .empty .icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+  .empty h3 { font-family: 'Orbitron', monospace; font-size: 0.9rem; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+  @media (max-width: 600px) {
+    .controls { padding: 1rem; }
+    .grid { padding: 1rem; gap: 1rem; }
+    .control-group { min-width: 140px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">PixelPets</div>
+  <p class="tagline">Tu vitrina digital de mascotas coleccionables</p>
+</header>
+
+<div class="controls">
+  <!-- HU-01: Busqueda por nombre — Samuel Castro Ruiz -->
+  <div class="control-group">
+    <label>Buscar por nombre</label>
+    <input type="text" id="search" placeholder="Ej: Pyroxis, Lunara...">
+  </div>
+  <!-- HU-02: Filtro por especie — Melany Mejia -->
+  <div class="control-group">
+    <label>Especie</label>
+    <select id="filterEspecie">
+      <option value="">Todas las especies</option>
+    </select>
+  </div>
+  <!-- HU-03: Filtro por rareza — Melany Mejia -->
+  <div class="control-group">
+    <label>Rareza</label>
+    <select id="filterRareza">
+      <option value="">Todas las rarezas</option>
+    </select>
+  </div>
+  <!-- HU-04: Ordenamiento por precio — Samuel Castro Ruiz -->
+  <div class="control-group">
+    <label>Ordenar por precio</label>
+    <select id="sortPrecio">
+      <option value="">Sin orden</option>
+      <option value="asc">Menor a mayor</option>
+      <option value="desc">Mayor a menor</option>
+    </select>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <span>Mostrando</span>
+  <span class="count-badge" id="countBadge">0</span>
+  <span>mascotas</span>
+</div>
+
+<div class="grid" id="petsGrid"></div>
+
+<script>
+  // ── Dataset (T-03) — Samuel Castro Ruiz ──
+  const pets = [
+    { id:'001', nombre:'Pyroxis',   especie:'Dragon',       rareza:'Legendario', precio:9500,  salud:95,  emoji:'🐲' },
+    { id:'002', nombre:'Lunara',    especie:'Gato Cosmico', rareza:'Raro',       precio:3200,  salud:88,  emoji:'🌙' },
+    { id:'003', nombre:'Boltix',    especie:'Robot',        rareza:'Comun',      precio:800,   salud:72,  emoji:'🤖' },
+    { id:'004', nombre:'Nebulor',   especie:'Dragon',       rareza:'Raro',       precio:4100,  salud:91,  emoji:'🐉' },
+    { id:'005', nombre:'Fizzpaw',   especie:'Gato Cosmico', rareza:'Comun',      precio:650,   salud:85,  emoji:'🐱' },
+    { id:'006', nombre:'Axiom-7',   especie:'Robot',        rareza:'Legendario', precio:12000, salud:99,  emoji:'⚙️' },
+    { id:'007', nombre:'Solkren',   especie:'Dragon',       rareza:'Comun',      precio:1200,  salud:78,  emoji:'🦎' },
+    { id:'008', nombre:'Miravex',   especie:'Gato Cosmico', rareza:'Legendario', precio:8800,  salud:97,  emoji:'⭐' },
+    { id:'009', nombre:'Runico',    especie:'Robot',        rareza:'Raro',       precio:2900,  salud:81,  emoji:'🔧' },
+    { id:'010', nombre:'Emberveil', especie:'Dragon',       rareza:'Legendario', precio:15000, salud:100, emoji:'🔥' },
+    { id:'011', nombre:'Pawlux',    especie:'Gato Cosmico', rareza:'Raro',       precio:3750,  salud:90,  emoji:'🐾' },
+    { id:'012', nombre:'Cogsworth', especie:'Robot',        rareza:'Comun',      precio:420,   salud:68,  emoji:'🦾' },
+  ];
+
+  // Estado global
+  const filters = { search:'', especie:'', rareza:'', sort:'' };
+
+  // ── Poblar selects dinamicamente (T-06, T-07) — Melany Mejia ──
+  function populateSelects() {
+    const especies = [...new Set(pets.map(p => p.especie))].sort();
+    const rarezas  = ['Comun','Raro','Legendario'];
+    const selE = document.getElementById('filterEspecie');
+    const selR = document.getElementById('filterRareza');
+    especies.forEach(e => { const o = document.createElement('option'); o.value=e; o.textContent=e; selE.appendChild(o); });
+    rarezas.forEach(r  => { const o = document.createElement('option'); o.value=r; o.textContent=r; selR.appendChild(o); });
+  }
+
+  // ── Render de cards (T-04) — Melany Mejia ──
+  function renderPets(list) {
+    const grid = document.getElementById('petsGrid');
+    document.getElementById('countBadge').textContent = list.length;
+    if (!list.length) {
+      grid.innerHTML = `<div class="empty"><div class="icon">🔭</div><h3>Ninguna mascota encontrada</h3><p>Intenta con otros filtros.</p></div>`;
+      return;
+    }
+    grid.innerHTML = list.map((p, i) => {
+      const rc = 'badge-' + p.rareza.toLowerCase();
+      const hc = p.salud >= 80 ? '#4ade80' : p.salud >= 50 ? '#facc15' : '#f87171';
+      const ab = p.rareza==='Legendario'
+        ? 'linear-gradient(135deg,rgba(249,115,22,.15),rgba(253,186,116,.08))'
+        : p.rareza==='Raro'
+        ? 'linear-gradient(135deg,rgba(168,85,247,.15),rgba(192,132,252,.08))'
+        : 'linear-gradient(135deg,rgba(74,222,128,.1),rgba(134,239,172,.05))';
+      return `
+        <div class="card" style="animation-delay:${i*.04}s">
+          <div class="card-avatar" style="background:${ab}">${p.emoji}</div>
+          <div class="card-body">
+            <div class="card-name">${p.nombre}</div>
+            <div class="card-meta">
+              <span class="badge badge-especie">${p.especie}</span>
+              <span class="badge ${rc}">${p.rareza}</span>
+            </div>
+            <div class="card-price">${p.precio.toLocaleString('es-CO')} <span>monedas</span></div>
+            <div class="health-label"><span>Salud</span><span>${p.salud}%</span></div>
+            <div class="health-bar"><div class="health-fill" style="width:${p.salud}%;background:${hc}"></div></div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Funcion unificada de filtros (T-09) — Samuel Castro + Melany Mejia ──
+  function applyFilters() {
+    let r = [...pets];
+    if (filters.search)  r = r.filter(p => p.nombre.toLowerCase().includes(filters.search.toLowerCase())); // HU-01
+    if (filters.especie) r = r.filter(p => p.especie === filters.especie);   // HU-02
+    if (filters.rareza)  r = r.filter(p => p.rareza === filters.rareza);     // HU-03
+    if (filters.sort === 'asc')  r.sort((a,b) => a.precio - b.precio);       // HU-04
+    if (filters.sort === 'desc') r.sort((a,b) => b.precio - a.precio);
+    renderPets(r);
+  }
+
+  // ── Debounce (300ms) — Samuel Castro Ruiz ──
+  function debounce(fn, ms) {
+    let t;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+  }
+
+  // Event listeners
+  const debouncedSearch = debounce(v => { filters.search = v; applyFilters(); }, 300);
+  document.getElementById('search').addEventListener('input', e => debouncedSearch(e.target.value.trim()));
+  document.getElementById('filterEspecie').addEventListener('change', e => { filters.especie = e.target.value; applyFilters(); });
+  document.getElementById('filterRareza').addEventListener('change',  e => { filters.rareza  = e.target.value; applyFilters(); });
+  document.getElementById('sortPrecio').addEventListener('change',    e => { filters.sort    = e.target.value; applyFilters(); });
+
+  // Init
+  populateSelects();
+  applyFilters();
+</script>
+</body>
+</html>
